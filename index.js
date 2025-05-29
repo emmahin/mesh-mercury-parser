@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const Mercury = require('@postlight/parser');
+const striptags = require('striptags');
 
 const app = express();
 app.use(bodyParser.json());
