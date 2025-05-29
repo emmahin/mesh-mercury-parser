@@ -1,22 +1,32 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const Mercury = require('@postlight/parser');
-const striptags = require('striptags');
+const express = require("express");
+const Mercury = require("@postlight/parser");
+const striptags = require("striptags");
 
 const app = express();
-app.use(bodyParser.json());
+const port = process.env.PORT || 3000;
 
-app.post('/parser', async (req, res) => {
+app.use(express.json());
+
+app.post("/", async (req, res) => {
   const { url } = req.body;
-  if (!url) return res.status(400).json({ error: 'Missing URL' });
+
+  if (!url) {
+    return res.status(400).json({ error: "Missing 'url' in request body" });
+  }
 
   try {
-    const result = await Mercury.parse(url);
-    res.json(result);
+    const article = await Mercury.parse(url);
+
+    // Ajout du contenu brut sans HTML
+    article.content_plain = striptags(article.content);
+
+    res.json(article);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to parse URL', details: err.toString() });
+    console.error(err);
+    res.status(500).json({ error: "Failed to parse article" });
   }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Parser API running on port ${PORT}`));
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
