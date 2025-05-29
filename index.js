@@ -1,7 +1,8 @@
 const express = require("express");
-const { Mercury } = require("@postlight/parser");
-const app = express();
+const parse = require("@postlight/parser"); // ⚠️ import par défaut
+const striptags = require("striptags");
 
+const app = express();
 app.use(express.json());
 
 app.post("/", async (req, res) => {
@@ -12,7 +13,8 @@ app.post("/", async (req, res) => {
   }
 
   try {
-    const result = await Mercury.parse(url);
+    const result = await parse(url); // utilisation directe de la fonction importée
+
     const response = {
       title: result.title,
       url: result.url,
@@ -20,9 +22,7 @@ app.post("/", async (req, res) => {
       lead_image_url: result.lead_image_url,
       excerpt: result.excerpt,
       word_count: result.word_count,
-      content: clean
-        ? result.content.replace(/<[^>]+>/g, "") // Nettoyage des balises HTML
-        : result.content,
+      content: clean ? striptags(result.content) : result.content,
     };
 
     res.json(response);
