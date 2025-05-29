@@ -1,5 +1,5 @@
 const express = require("express");
-const parse = require("@postlight/parser"); // ⚠️ import par défaut
+const mercury = require("@postlight/parser");
 const striptags = require("striptags");
 
 const app = express();
@@ -13,7 +13,7 @@ app.post("/", async (req, res) => {
   }
 
   try {
-    const result = await parse(url); // utilisation directe de la fonction importée
+    const result = await mercury.parse(url);
 
     const response = {
       title: result.title,
